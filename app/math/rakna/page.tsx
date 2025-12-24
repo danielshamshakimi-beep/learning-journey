@@ -268,6 +268,7 @@ export default function RaknaGamePage() {
                       onClick={() => handleAnswerClick(option)}
                       isCorrect={buttonIsCorrect}
                       disabled={state.hearts === 0 || state.isCorrect === true || state.roundComplete}
+                      wasWrong={state.wrongAnswers?.has(option)}
                     />
                   </motion.div>
                 );

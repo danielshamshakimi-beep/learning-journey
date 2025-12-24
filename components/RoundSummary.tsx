@@ -43,7 +43,7 @@ export default function RoundSummary({ summary, onNextRound, onRetry }: RoundSum
         animate={{ y: 0 }}
         className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full text-center"
       >
-        <h2 className="text-4xl font-bold text-purple-600 mb-6" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
+        <h2 className="text-4xl font-bold text-purple-700 mb-6" style={{ fontFamily: 'Comic Sans MS, cursive' }}>
           Runda {summary.roundNumber} Klar! 🎉
         </h2>
         
@@ -94,36 +94,42 @@ export default function RoundSummary({ summary, onNextRound, onRetry }: RoundSum
           </div>
         </div>
         
-        {/* Actions */}
+        {/* Actions - Colorful and memorable for kids */}
         <div className="flex flex-col gap-3">
+          {/* Blue = Play Again (same round) */}
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={onNextRound}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xl font-bold py-4 rounded-2xl shadow-lg"
-            style={{ fontFamily: 'Comic Sans MS, cursive' }}
-          >
-            Nästa Runda →
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={onRetry}
-            className="bg-blue-500 text-white text-xl font-bold py-4 rounded-2xl shadow-lg"
+            className="bg-blue-500 hover:bg-blue-600 text-white text-2xl font-bold py-5 rounded-3xl shadow-lg transition-colors"
             style={{ fontFamily: 'Comic Sans MS, cursive' }}
           >
-            Spela Igen
+            🔵 Spela Igen
           </motion.button>
+          
+          {/* Green = Next Round */}
+          <motion.button
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onNextRound}
+            className="bg-green-500 hover:bg-green-600 text-white text-2xl font-bold py-5 rounded-3xl shadow-lg transition-colors"
+            style={{ fontFamily: 'Comic Sans MS, cursive' }}
+          >
+            🟢 Nästa Runda →
+          </motion.button>
+          
+          {/* Yellow = Achievement Board */}
           <Link
             href="/stickers"
-            className="bg-gradient-to-r from-pink-400 to-pink-500 text-white text-xl font-bold py-4 rounded-2xl shadow-lg text-center hover:opacity-90 transition-opacity"
+            className="bg-yellow-500 hover:bg-yellow-600 text-white text-2xl font-bold py-5 rounded-3xl shadow-lg text-center transition-colors"
             style={{ fontFamily: 'Comic Sans MS, cursive' }}
           >
-            Se Prestationstavlan 🏆
+            🟡 Prestationstavlan 🏆
           </Link>
+          
           <Link
             href="/"
-            className="text-gray-600 text-lg hover:text-gray-800 underline text-center"
+            className="text-gray-600 text-lg hover:text-gray-800 underline text-center mt-2"
           >
             Tillbaka till Menyn
           </Link>
@@ -132,4 +138,3 @@ export default function RoundSummary({ summary, onNextRound, onRetry }: RoundSum
     </motion.div>
   );
 }
-

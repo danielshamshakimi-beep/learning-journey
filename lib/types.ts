@@ -47,6 +47,7 @@ export interface GameState {
   showSummary: boolean;
   showConfetti: boolean;
   pendingMilestone: string | null; // Milestone ID that needs sticker selection
+  wrongAnswers: Set<number>; // Track wrong answers for current question to grey them out
 }
 
 export interface RoundSummary {

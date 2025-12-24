@@ -40,7 +40,7 @@ function generateGridPositions(count: number): Array<{ row: number; col: number 
     return SUBITIZING_PATTERNS[count];
   }
 
-  // For 6-20: Use regular grid (5 columns)
+  // For 6-20: Use regular grid (5 columns) for counting
   const positions: Array<{ row: number; col: number }> = [];
   const cols = 5;
   
@@ -71,19 +71,38 @@ export default function ObjectQuestionCard({ question, className = '', isCorrect
   // Generate grid positions
   const gridPositions = generateGridPositions(count);
   
-  // Determine grid layout
+  // Determine grid layout - better system for 5+ objects
   const isSubitizing = count <= 5;
-  const gridCols = isSubitizing ? 3 : 5;
-  const gridRows = isSubitizing ? 3 : Math.ceil(count / 5);
   
-  // Object size: Increased 5-10% (text-6xl to text-8xl)
-  const objectSize = count <= 5 ? 'text-8xl' : count <= 10 ? 'text-7xl' : 'text-6xl';
-  // Cell size: Larger to prevent clipping, with extra space for emojis
-  const cellSize = count <= 5 ? 'h-32 w-32' : 'h-24 w-24';
-  const gridGap = count <= 5 ? 'gap-2' : 'gap-3 md:gap-4'; // More space to prevent clipping
+  // For 5 objects in a row, use 5 columns instead of forcing into 3x3
+  let gridCols: number;
+  let gridRows: number;
+  
+  if (count <= 5) {
+    // Subitizing: use 3x3 grid
+    gridCols = 3;
+    gridRows = 3;
+  } else if (count <= 10) {
+    // 6-10: Use 5 columns (2 rows max)
+    gridCols = 5;
+    gridRows = Math.ceil(count / 5);
+  } else {
+    // 11-20: Use 5 columns (4 rows max)
+    gridCols = 5;
+    gridRows = Math.ceil(count / 5);
+  }
+  
+  // Object size: Adjusted for better fit
+  const objectSize = count <= 5 ? 'text-7xl' : count <= 10 ? 'text-6xl' : 'text-5xl';
+  
+  // Cell size: Better sizing to prevent clipping
+  const cellSize = count <= 5 ? 'h-28 w-28' : count <= 10 ? 'h-20 w-20' : 'h-18 w-18';
+  
+  // Grid gap: More space for larger counts
+  const gridGap = count <= 5 ? 'gap-2' : count <= 10 ? 'gap-3' : 'gap-2';
   
   // Padding: Extra padding to prevent clipping
-  const cardPadding = count <= 5 ? 'p-6' : count <= 10 ? 'p-8' : 'p-10';
+  const cardPadding = count <= 5 ? 'p-6' : count <= 10 ? 'p-8' : 'p-6';
   
   // Get subtle theme-based background for OUTER container only
   const themeBackground = THEME_BACKGROUNDS[emoji] || 'rgba(0, 0, 0, 0.005)';
@@ -112,7 +131,7 @@ export default function ObjectQuestionCard({ question, className = '', isCorrect
         <div 
           className="relative w-full rounded-3xl bg-white"
           style={{
-            minHeight: count <= 5 ? '280px' : count <= 10 ? '400px' : '480px',
+            minHeight: count <= 5 ? '300px' : count <= 10 ? '400px' : '500px',
             boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
             overflow: 'visible', // Allow emojis to render fully
           }}

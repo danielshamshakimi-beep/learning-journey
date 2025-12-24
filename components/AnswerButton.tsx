@@ -8,9 +8,10 @@ interface AnswerButtonProps {
   onClick: () => void;
   isCorrect: boolean | null;
   disabled: boolean;
+  wasWrong?: boolean; // If this answer was wrong earlier in the session
 }
 
-export default function AnswerButton({ answer, onClick, isCorrect, disabled }: AnswerButtonProps) {
+export default function AnswerButton({ answer, onClick, isCorrect, disabled, wasWrong = false }: AnswerButtonProps) {
   const [animationKey, setAnimationKey] = useState(0);
 
   useEffect(() => {
@@ -20,6 +21,10 @@ export default function AnswerButton({ answer, onClick, isCorrect, disabled }: A
   }, [isCorrect]);
 
   const getButtonStyle = () => {
+    // If this answer was wrong earlier, grey it out permanently
+    if (wasWrong) {
+      return 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60';
+    }
     if (disabled && isCorrect === null) {
       return 'bg-gray-50 text-gray-400 cursor-not-allowed';
     }
@@ -27,7 +32,7 @@ export default function AnswerButton({ answer, onClick, isCorrect, disabled }: A
       return 'bg-purple-600 text-white';
     }
     if (isCorrect === false) {
-      return 'bg-gray-100 text-gray-400';
+      return 'bg-gray-200 text-gray-400 opacity-60';
     }
     return 'bg-white text-purple-700 hover:bg-purple-50 active:bg-purple-100';
   };
@@ -35,8 +40,8 @@ export default function AnswerButton({ answer, onClick, isCorrect, disabled }: A
   return (
     <motion.button
       key={animationKey}
-      whileHover={!disabled && isCorrect === null ? { scale: 1.03, y: -2 } : {}}
-      whileTap={!disabled ? { scale: 0.97 } : {}}
+      whileHover={!disabled && !wasWrong && isCorrect === null ? { scale: 1.03, y: -2 } : {}}
+      whileTap={!disabled && !wasWrong ? { scale: 0.97 } : {}}
       animate={
         isCorrect === true
           ? {

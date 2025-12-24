@@ -46,6 +46,7 @@ export function createInitialState(level: number = 1): GameState {
     showSummary: false,
     showConfetti: false,
     pendingMilestone: null,
+    wrongAnswers: new Set<number>(),
   };
 }
 
@@ -67,6 +68,11 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         return state;
       }
 
+      // If this answer was already marked as wrong, don't process it again
+      if (state.wrongAnswers.has(action.answer)) {
+        return state;
+      }
+
       const correct = checkAnswer(action.answer, state.currentQuestion.answer);
       const newStreak = correct ? state.streak + 1 : 0;
       const newBestStreak = Math.max(newStreak, state.bestStreak);
@@ -84,6 +90,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       // Lose a heart if wrong
       const newHearts = correct ? state.hearts : Math.max(0, state.hearts - 1);
       
+      // Track wrong answers to grey them out
+      const newWrongAnswers = new Set(state.wrongAnswers);
+      if (!correct) {
+        newWrongAnswers.add(action.answer);
+      }
+      
       // Check if round is complete (all questions answered or out of hearts)
       const isLastQuestion = state.currentRoundIndex >= state.questionsInRound.length - 1;
       const roundComplete = isLastQuestion || newHearts === 0;
@@ -100,6 +112,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         totalQuestions: state.totalQuestions + 1,
         roundComplete,
         showConfetti: correct,
+        wrongAnswers: newWrongAnswers,
       };
     }
 
@@ -120,6 +133,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         selectedAnswer: null,
         isCorrect: null,
         showConfetti: false,
+        wrongAnswers: new Set<number>(), // Reset wrong answers for new question
       };
     }
 

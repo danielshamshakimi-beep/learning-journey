@@ -47,6 +47,7 @@ export function createInitialStateRakna(level: number = 1, roundNumber: number =
     showSummary: false,
     showConfetti: false,
     pendingMilestone: null,
+    wrongAnswers: new Set<number>(),
   };
 }
 
@@ -71,6 +72,11 @@ export function gameReducerRakna(state: GameState, action: GameAction): GameStat
         return state;
       }
 
+      // If this answer was already marked as wrong, don't process it again
+      if (state.wrongAnswers.has(action.answer)) {
+        return state;
+      }
+
       const correct = checkAnswer(action.answer, state.currentQuestion.answer);
       // In Räkna mode, streaks don't give bonuses (still track for stats)
       const newStreak = correct ? state.streak + 1 : 0;
@@ -92,6 +98,12 @@ export function gameReducerRakna(state: GameState, action: GameAction): GameStat
       // Lose a heart if wrong
       const newHearts = correct ? state.hearts : Math.max(0, state.hearts - 1);
       
+      // Track wrong answers to grey them out
+      const newWrongAnswers = new Set(state.wrongAnswers);
+      if (!correct) {
+        newWrongAnswers.add(action.answer);
+      }
+      
       // Check if round is complete
       const isLastQuestion = state.currentRoundIndex >= state.questionsInRound.length - 1;
       const roundComplete = isLastQuestion || newHearts === 0;
@@ -109,6 +121,7 @@ export function gameReducerRakna(state: GameState, action: GameAction): GameStat
         missedFacts: newMissedFacts,
         roundComplete,
         showConfetti: correct,
+        wrongAnswers: newWrongAnswers,
       };
     }
 
@@ -129,6 +142,7 @@ export function gameReducerRakna(state: GameState, action: GameAction): GameStat
         selectedAnswer: null,
         isCorrect: null,
         showConfetti: false,
+        wrongAnswers: new Set<number>(), // Reset wrong answers for new question
       };
     }
 
